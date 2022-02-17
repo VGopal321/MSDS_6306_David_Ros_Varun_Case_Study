@@ -17,5 +17,6 @@ breweries%>%
   summarize(count=n())%>%
   ggplot(aes(x=State,y=count))+
   geom_bar(stat='identity')
+#test addition
   
 
