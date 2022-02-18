@@ -5,6 +5,7 @@ library(class)
 library(e1071)
 library(maps)
 library(mapproj)
+library(plotly)
 
 #Import datasets
 beers=read.csv(file.choose(),header=TRUE)
@@ -51,4 +52,18 @@ beerbreweries=beerbreweries%>%select(!Brewery_id)
 dim(beersclean)
 dim(beerbreweries)
 
-#Commit testing testing 123
+#Find average ABV and IBU per state
+head(beerbreweries)
+colnames(beerbreweries)[8]='Brewery_Name'
+colnames(beerbreweries)[2]='Beer_Name'
+
+#Gather mean abv and ibu per each state
+ABVIBUData=beerbreweries%>%group_by(State)%>%summarize(meanABV=mean(ABV),meanIBU=mean(IBU),count=n())
+
+#barplot ABV
+ABVplot=ABVIBUData%>%ggplot(aes(x=State,y=meanABV))+geom_bar(stat='identity')
+ggplotly(ABVplot)
+
+#barplot IBU
+IBUplot=ABVIBUData%>%ggplot(aes(x=State,y=meanIBU))+geom_bar(stat='identity')
+ggplotly(IBUplot)
