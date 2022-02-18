@@ -50,3 +50,5 @@ beerbreweries=merge(beersclean,breweries,by="Brew_ID",all.x = TRUE)
 beerbreweries=beerbreweries%>%select(!Brewery_id)
 dim(beersclean)
 dim(beerbreweries)
+
+#Commit test
