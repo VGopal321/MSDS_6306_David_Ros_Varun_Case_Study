@@ -145,8 +145,8 @@ summary(beerbreweries$ABV)
 
 #Scatter Plot ABV and IBU
 beerbreweries%>%ggplot(aes(x=ABV,y=IBU))+
-  geom_point(aes(color='blue'))+
-  geom_smooth(method="lm")+
+  geom_point(aes(),color='blue')+
+  geom_smooth(aes(),color='red',method="lm")+
   ggtitle('Bitterness vs Alcohol Content')+
   xlab('Alcohol Content (ABV)')+
   ylab('Bitterness (IBU)')+
