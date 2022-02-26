@@ -201,6 +201,7 @@ HighABVIBU=ABVIBUData%>%filter(medianABV==max(medianABV))
 print(HighABVIBU)
 formattable(HighABVIBU)
 
+#Find State w/ Max ABV and IBU based on updated cleanup (separate for ABV and IBU)
 HighABV=ABVData%>%filter(medianABV==max(medianABV))
 print(HighABV)
 formattable(HighABV)
@@ -209,7 +210,10 @@ HighIBU=IBUData%>%filter(medianIBU==max(medianIBU))
 print(HighIBU)
 formattable(HighIBU)
 
-#Maine has the highest ABV and IBU
+#Maine has the highest ABV and IBU when all NAs are deleted
+
+#When accounting for all present ABV values, KY and DC have the 
+#highest median ABV
 
 #Find State w/ Max ABV and IBU Version 2
 
@@ -319,19 +323,14 @@ meanSen=colMeans(masterSen)
 meanSpec=colMeans(masterSpec)
 
 #Create dataframe with all stats
-AleStats=data.frame(k=1:30,meanAcc,meanSen,meanSpec)
-
-names(AleStats)=(c('k','Mean_Accuracy','Mean_Sensitivity','Mean_Specificity'))
+AleStats=data.frame(k=1:30,Mean_Accuracy=meanAcc,Mean_Sensitivity=meanSen,Mean_Specificity=meanSpec,Sum_Stat=(meanSpec+meanSen+meanAcc))
 
 #Tune k-val based on all three stats
-HighAleStats=AleStats%>%filter(Mean_Accuracy==max(Mean_Accuracy)|Mean_Sensitivity==max(Mean_Sensitivity)|Mean_Specificity==max(Mean_Specificity))
+HighAleStats=AleStats%>%filter(Sum_Stat==max(Sum_Stat))
 formattable(HighAleStats)
 
-#k=6 seems to give the best balance between accuracy, sensitivity, and specificity
-#k=6 has the highest sensitivity
-#An odd number is preferable. k=5 seems to also have a good balance between accuracy, sensitivity, and specificity 
-#k=3 also consistently puts out specificity, sensitivity, and accuracy above .85
-#k=3 seems to be an appropriate k-val
+#k=4 seems to give the best balance between accuracy, sensitivity, and specificity
+#I would prefer to use an odd number, but k=3,4, or 5 should provide good results regardless
 
 #70-30 Training-Test Split
 set.seed(sample(1:100000,1))
@@ -339,7 +338,7 @@ trainInd=sample(1:dim(AleClean)[1],round(0.7*dim(AleClean)[1]))
 trainAle=AleClean[trainInd,]
 testAle=AleClean[-trainInd,]
 
-#k-NN to predict whether the drink is an IPA or an Ale
+#3-NN to predict whether the drink is an IPA or an Ale
 AlePredictions=knn(trainAle[,c('ABV','IBU')],testAle[,c('ABV','IBU')],trainAle$IPAorALE,k=3,prob=TRUE)
 AleTable=table(AlePredictions,testAle$IPAorALE)
 confusionMatrix(AleTable)
