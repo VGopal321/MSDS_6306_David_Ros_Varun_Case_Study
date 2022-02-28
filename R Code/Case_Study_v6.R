@@ -217,8 +217,8 @@ formattable(HighIBU)
 
 #Find State w/ Max ABV and IBU Version 2
 
-maxABVData=beerbreweries%>%filter(ABV==max(ABV))
-maxIBUData=beerbreweries%>%filter(IBU==max(IBU))
+maxABVData=ABVbreweries%>%filter(ABV==max(ABV))
+maxIBUData=IBUbreweries%>%filter(IBU==max(IBU))
 maxABVData=data.frame(maxABVData$Beer_Name, maxABVData$Style, maxABVData$Brewery_Name, maxABVData$City, maxABVData$State, maxABVData$ABV)
 names(maxABVData) <- c("Beer_Name","Style","Brewery_Name","City","State","Value")
 maxABVData = maxABVData%>% mutate(Type = "Maximum ABV")
@@ -329,7 +329,7 @@ AleStats=data.frame(k=1:30,Mean_Accuracy=meanAcc,Mean_Sensitivity=meanSen,Mean_S
 HighAleStats=AleStats%>%filter(Sum_Stat==max(Sum_Stat))
 formattable(HighAleStats)
 
-#k=4 seems to give the best balance between accuracy, sensitivity, and specificity
+#k=4 seemed to give the best balance between accuracy, sensitivity, and specificity
 #I would prefer to use an odd number, but k=3,4, or 5 should provide good results regardless
 
 #70-30 Training-Test Split
