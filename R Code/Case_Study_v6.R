@@ -131,6 +131,10 @@ IBUclean$Brew_ID=IBUclean$Brewery_id
 IBUbreweries=merge(IBUclean,breweries,by="Brew_ID",all.x = TRUE)
 IBUbreweries=IBUbreweries%>%select(!Brewery_id)
 
+#Print first 6 and last 6 observations
+head(beerbreweries)
+tail(beerbreweries)
+
 ##QUESTION 4
 
 #Find median ABV and IBU per state
@@ -344,3 +348,40 @@ AleTable=table(AlePredictions,testAle$IPAorALE)
 confusionMatrix(AleTable)
 
 #It appears IBU and ABV levels can explain whether or not a beverage is an IPA or an ale
+
+#Additional Questions
+#Which brewery is the most productive?
+print(beerbreweries%>%group_by(Brewery_Name)%>%
+  summarize(State,count=n())%>%
+  filter(count==32),n=100)
+#Two most productive breweries were Oskar Blues Brewery (CO) 
+#and Sun King Brewing Company (IN) 
+brewerydf=data.frame(c('Oskar Blues Brewery','Sun King Brewing Company'),c('CO','IN'),c(32,32))
+names(brewerydf)=(c('Brewery','State','Number of Breweries'))
+formattable(brewerydf)
+
+#How does the correlation between ABV and IBU change as either increase?
+#Scatter Plot ABV and IBU
+
+#Check correlation at lower ABV values
+beerbreweries%>%filter(ABV<0.0625)%>%
+  ggplot(aes(x=ABV,y=IBU))+
+  geom_point(aes(),color='blue')+
+  geom_smooth(method="lm")+
+  ggtitle('Bitterness vs Alcohol Content (ABV<0.0625)')+
+  xlab('Alcohol Content (ABV)')+
+  ylab('Bitterness (IBU)')+
+  theme(title = element_text(face="bold", color = "red3", size = 12),
+        axis.title.x = element_text(face="bold", color = "dodgerblue3", size = 9),
+        axis.title.y = element_text(face="bold", color = "dodgerblue3", size = 9))
+#Check correlation at higher ABV values
+beerbreweries%>%filter(ABV>0.0625&ABV<0.1)%>%
+  ggplot(aes(x=ABV,y=IBU))+
+  geom_point(aes(),color='blue')+
+  geom_smooth(method="lm")+
+  ggtitle('Bitterness vs Alcohol Content (ABV>0.0625)')+
+  xlab('Alcohol Content (ABV)')+
+  ylab('Bitterness (IBU)')+
+  theme(title = element_text(face="bold", color = "red3", size = 12),
+        axis.title.x = element_text(face="bold", color = "dodgerblue3", size = 9),
+        axis.title.y = element_text(face="bold", color = "dodgerblue3", size = 9))
