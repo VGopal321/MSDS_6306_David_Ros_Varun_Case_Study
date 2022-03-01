@@ -374,6 +374,11 @@ beerbreweries%>%filter(ABV<0.0625)%>%
   theme(title = element_text(face="bold", color = "red3", size = 12),
         axis.title.x = element_text(face="bold", color = "dodgerblue3", size = 9),
         axis.title.y = element_text(face="bold", color = "dodgerblue3", size = 9))
+#Find R^2 at lower values
+LowABV=as.data.frame(beerbreweries%>%filter(ABV<0.0625))
+LmodLow=lm(IBU~ABV,LowABV)
+summary(LmodLow)#r^2=0.1971
+
 #Check correlation at higher ABV values
 beerbreweries%>%filter(ABV>0.0625&ABV<0.1)%>%
   ggplot(aes(x=ABV,y=IBU))+
@@ -385,3 +390,11 @@ beerbreweries%>%filter(ABV>0.0625&ABV<0.1)%>%
   theme(title = element_text(face="bold", color = "red3", size = 12),
         axis.title.x = element_text(face="bold", color = "dodgerblue3", size = 9),
         axis.title.y = element_text(face="bold", color = "dodgerblue3", size = 9))
+#Find R^2 at lower values
+HighABV=as.data.frame(beerbreweries%>%filter(ABV>0.0625))
+LmodHigh=lm(IBU~ABV,HighABV)
+summary(LmodHigh)#r^2=0.07411
+
+#Find overall r^2
+LmodTotal=lm(IBU~ABV,beerbreweries)
+summary(LmodTotal)#r^2=0.4497
