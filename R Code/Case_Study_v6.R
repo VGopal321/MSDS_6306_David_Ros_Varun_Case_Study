@@ -347,6 +347,30 @@ AlePredictions=knn(trainAle[,c('ABV','IBU')],testAle[,c('ABV','IBU')],trainAle$I
 AleTable=table(AlePredictions,testAle$IPAorALE)
 confusionMatrix(AleTable)
 
+#Scatterplots of prediction and actual classifications
+#Scatterplot of actual classifications
+testAle%>%ggplot(aes(ABV,IBU,color=IPAorALE))+
+  geom_point()+
+  ggtitle('Bitterness vs Alcohol Content')+
+  xlab('Alcohol Content (ABV)')+
+  ylab('Bitterness (IBU)')+
+  theme(title = element_text(face="bold", color = "red3", size = 12),
+        legend.title = element_blank(),
+        axis.title.x = element_text(face="bold", color = "dodgerblue3", size = 9),
+        axis.title.y = element_text(face="bold", color = "dodgerblue3", size = 9))
+
+#Scatterplot of predicted classifications
+testAle%>%mutate(AlePredictions)%>%
+  ggplot(aes(ABV,IBU,color=AlePredictions))+
+  geom_point()+
+  ggtitle('Bitterness vs Alcohol Content')+
+  xlab('Alcohol Content (ABV)')+
+  ylab('Bitterness (IBU)')+
+  theme(title = element_text(face="bold", color = "red3", size = 12),
+        legend.title=element_blank(),
+        axis.title.x = element_text(face="bold", color = "dodgerblue3", size = 9),
+        axis.title.y = element_text(face="bold", color = "dodgerblue3", size = 9))
+
 #It appears IBU and ABV levels can explain whether or not a beverage is an IPA or an ale
 
 #Additional Questions
@@ -390,7 +414,7 @@ beerbreweries%>%filter(ABV>0.0625&ABV<0.1)%>%
   theme(title = element_text(face="bold", color = "red3", size = 12),
         axis.title.x = element_text(face="bold", color = "dodgerblue3", size = 9),
         axis.title.y = element_text(face="bold", color = "dodgerblue3", size = 9))
-#Find R^2 at lower values
+#Find R^2 at higher values
 HighABV=as.data.frame(beerbreweries%>%filter(ABV>0.0625))
 LmodHigh=lm(IBU~ABV,HighABV)
 summary(LmodHigh)#r^2=0.07411
@@ -398,3 +422,17 @@ summary(LmodHigh)#r^2=0.07411
 #Find overall r^2
 LmodTotal=lm(IBU~ABV,beerbreweries)
 summary(LmodTotal)#r^2=0.4497
+
+#Both high and low lines on the same graph
+HighLowAbv=ifelse(beerbreweries$ABV>0.0625,'High','Low')
+beerbreweries%>%mutate(HighLowAbv)%>%
+  ggplot(aes(x=ABV,y=IBU))+
+  geom_point(aes(),col=ifelse(beerbreweries$ABV>0.0625,'blue','red'))+
+  geom_smooth(method='lm',aes(col=HighLowAbv))+
+  ggtitle('Bitterness vs Alcohol Content')+
+  xlab('Alcohol Content (ABV)')+
+  ylab('Bitterness (IBU)')+
+  theme(title = element_text(face="bold", color = "red3", size = 12),
+        axis.title.x = element_text(face="bold", color = "dodgerblue3", size = 9),
+        axis.title.y = element_text(face="bold", color = "dodgerblue3", size = 9),
+        legend.title=element_blank())
