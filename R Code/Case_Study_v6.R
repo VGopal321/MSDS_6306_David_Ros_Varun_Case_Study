@@ -347,6 +347,17 @@ AlePredictions=knn(trainAle[,c('ABV','IBU')],testAle[,c('ABV','IBU')],trainAle$I
 AleTable=table(AlePredictions,testAle$IPAorALE)
 confusionMatrix(AleTable)
 
+#Scatterplot of training set
+trainAle%>%ggplot(aes(ABV,IBU,color=IPAorALE))+
+  geom_point(position='jitter')+
+  ggtitle('Bitterness vs Alcohol Content')+
+  xlab('Alcohol Content (ABV)')+
+  ylab('Bitterness (IBU)')+
+  theme(title = element_text(face="bold", color = "red3", size = 12),
+        legend.title = element_blank(),
+        axis.title.x = element_text(face="bold", color = "dodgerblue3", size = 9),
+        axis.title.y = element_text(face="bold", color = "dodgerblue3", size = 9))
+
 #Scatterplots of prediction and actual classifications
 #Scatterplot of actual classifications
 testAle%>%ggplot(aes(ABV,IBU,color=IPAorALE))+
@@ -424,7 +435,7 @@ LmodTotal=lm(IBU~ABV,beerbreweries)
 summary(LmodTotal)#r^2=0.4497
 
 #Both high and low lines on the same graph
-HighLowAbv=ifelse(beerbreweries$ABV>0.0625,'High','Low')
+HighLowAbv=ifelse(beerbreweries$ABV>0.0625,'High ABV','Low ABV')
 beerbreweries%>%mutate(HighLowAbv)%>%
   ggplot(aes(x=ABV,y=IBU))+
   geom_point(aes(),col=ifelse(beerbreweries$ABV>0.0625,'blue','red'))+
